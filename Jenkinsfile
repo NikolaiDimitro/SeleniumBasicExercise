@@ -1,48 +1,82 @@
 pipeline {
+
     agent any
 
     stages {
-        stage("Restore dependencies") {
+
+        stage("Dependency Restore") {
             steps {
-                bat 'dotnet restore'
+                bat "dotnet restore"
             }
             post {
+                success {
+                    echo "Restore succeeded"
+                }
                 failure {
-                    echo "Step failed"
+                    echo "Restore failed"
                 }
             }
         }
 
-        stage("Build solution") {
+        stage("Build") {
             steps {
-                bat 'dotnet build --no-restore'
+                bat "dotnet build"
+            }
+            post {
+                success {
+                    echo "Build succeeded"
+                }
+                failure {
+                    echo "Build failed"
+                }
             }
         }
 
-        stage("Run tests") {
+        stage("Test") {
             parallel {
-                stage("Run tests for Project 1") {
+
+                stage("Run test for Project 1") {
                     steps {
                         bat 'dotnet test TestProject1/TestProject1.csproj --no-build --verbosity normal'
                     }
+                    post {
+                        success {
+                            echo "Test 1 succeeded"
+                        }
+                        failure {
+                            echo "Test 1 failed"
+                        }
+                    }
                 }
-                stage("Run tests for Project 2") {
+
+                stage("Run test for Project 2") {
                     steps {
                         bat 'dotnet test TestProject2/TestProject2.csproj --no-build --verbosity normal'
                     }
+                    post {
+                        success {
+                            echo "Test 2 succeeded"
+                        }
+                        failure {
+                            echo "Test 2 failed"
+                        }
+                    }
                 }
-                stage("Run tests for Project 3") {
+
+                stage("Run test for Project 3") {
                     steps {
                         bat 'dotnet test TestProject3/TestProject3.csproj --no-build --verbosity normal'
                     }
+                    post {
+                        success {
+                            echo "Test 3 succeeded"
+                        }
+                        failure {
+                            echo "Test 3 failed"
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Workflow completed successfully"
         }
     }
 }
